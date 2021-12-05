@@ -51,8 +51,8 @@ function uploadExpenses(event) {
         const transaction = db.transaction(['new_expense'], 'readwrite');
         const expenseObjectStore = transaction.objectStore('new_expense');
         expenseObjectStore.clear();
-        // reload page on new page open. Chart will not update if opened with network connected and data stored in indexedDB
-        // as chart is propogated first, then indexedDB is checked on new page load.
+        // reload page if new page open. Chart will not update if opened with network connected and data stored in indexedDB
+        // as chart is propogated first, then indexedDB is checked/uploaded on new page load.
         // not needed on lost connection / reconnection as chart will be current
         if (!event) {
           window.location.reload();
