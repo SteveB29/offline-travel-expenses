@@ -11,7 +11,9 @@ request.onsuccess = function(event) {
   db = event.target.result;
 
   if (navigator.onLine) {
-    uploadExpenses();
+    // pass false to function as is page load, not an event
+    const isEvent = false;
+    uploadExpenses(isEvent);
   }
 };
 
@@ -25,7 +27,7 @@ function saveRecord(expense) {
   expenseObjectStore.add(expense);
 }
 
-function uploadExpenses() {
+function uploadExpenses(event) {
   const transaction = db.transaction(['new_expense'], 'readwrite');
   const expenseObjectStore = transaction.objectStore('new_expense');
   const getAll = expenseObjectStore.getAll();
@@ -49,9 +51,12 @@ function uploadExpenses() {
         const transaction = db.transaction(['new_expense'], 'readwrite');
         const expenseObjectStore = transaction.objectStore('new_expense');
         expenseObjectStore.clear();
-        // reload page as chart will not update if page opened with network connected and data stored in indexedDB
-        // look for less jarring solution (page reload causes flash)
-        window.location.reload();
+        // reload page on new page open. Chart will not update if opened with network connected and data stored in indexedDB
+        // as chart is propogated first, then indexedDB is checked on new page load.
+        // not needed on lost connection / reconnection as chart will be current
+        if (!event) {
+          window.location.reload();
+        }
       })
       .catch(err => {
         console.log(err);
