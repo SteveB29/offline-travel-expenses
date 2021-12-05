@@ -11,9 +11,7 @@ request.onsuccess = function(event) {
   db = event.target.result;
 
   if (navigator.onLine) {
-    // pass false to function as is page load, not an event
-    const isEvent = false;
-    uploadExpenses(isEvent);
+    uploadExpenses();
   }
 };
 
@@ -51,12 +49,8 @@ function uploadExpenses(event) {
         const transaction = db.transaction(['new_expense'], 'readwrite');
         const expenseObjectStore = transaction.objectStore('new_expense');
         expenseObjectStore.clear();
-        // repopulate page if new page open. Chart will not update if new page opened with network connected and data stored in indexedDB
-        // as chart is propogated first, then indexedDB is checked/uploaded to database.
-        // not needed on lost connection / reconnection as chart will be current
-        if (!event) {
-          populatePage();
-        }
+
+        populatePage();
       })
       .catch(err => {
         console.log(err);
