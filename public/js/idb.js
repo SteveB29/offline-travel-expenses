@@ -10,9 +10,9 @@ request.onupgradeneeded = function(event) {
 request.onsuccess = function(event) {
   db = event.target.result;
 
-  // if (navigator.onLine) {
-  //   uploadExpenses();
-  // }
+  if (navigator.onLine) {
+    uploadExpenses();
+  }
 };
 
 request.onerror = function(event) {
@@ -24,3 +24,40 @@ function saveRecord(expense) {
   const expenseObjectStore = transaction.objectStore('new_expense');
   expenseObjectStore.add(expense);
 }
+
+function uploadExpenses() {
+  const transaction = db.transaction(['new_expense'], 'readwrite');
+  const expenseObjectStore = transaction.objectStore('new_expense');
+  const getAll = expenseObjectStore.getAll();
+  
+  getAll.onsuccess = function() {
+    // checks if there is data stored in indexedDB and adds to database if there is
+    if (getAll.result.length > 0) {
+      fetch('/api/transaction/bulk', {
+        method: 'POST',
+        body: JSON.stringify(getAll.result),
+        headers: {
+          Accept: "application/json, text/plain, */*",
+         "Content-Type": "application/json"
+        }
+      })
+      .then(response => response.json())
+      .then(serverResponse => {
+        if (serverResponse.message || serverResponse.errors) {
+          throw new Error(serverResponse);
+        }
+        const transaction = db.transaction(['new_expense'], 'readwrite');
+        const expenseObjectStore = transaction.objectStore('new_expense');
+        expenseObjectStore.clear();
+        // reload page as chart will not update if page opened with network connected and data stored in indexedDB
+        // look for less jarring solution (page reload causes flash)
+        window.location.reload();
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
+  };
+}
+
+window.addEventListener('online', uploadExpenses);
