@@ -14,7 +14,7 @@ function populatePage() {
     populateTable();
     populateChart();
   });
-}
+};
 
 populatePage();
 
@@ -26,7 +26,7 @@ function populateTotal() {
 
   let totalEl = document.querySelector("#total");
   totalEl.textContent = total;
-}
+};
 
 function populateTable() {
   let tbody = document.querySelector("#tbody");
@@ -42,7 +42,7 @@ function populateTable() {
 
     tbody.appendChild(tr);
   });
-}
+};
 
 function populateChart() {
   // copy array and reverse it
@@ -80,7 +80,7 @@ function populateChart() {
         }]
     }
   });
-}
+};
 
 function sendTransaction(isAdding) {
   let nameEl = document.querySelector("#t-name");
@@ -146,7 +146,7 @@ function sendTransaction(isAdding) {
     nameEl.value = "";
     amountEl.value = "";
   });
-}
+};
 
 document.querySelector("#add-btn").onclick = function() {
   sendTransaction(true);

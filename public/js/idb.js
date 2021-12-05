@@ -23,7 +23,7 @@ function saveRecord(expense) {
   const transaction = db.transaction(['new_expense'], 'readwrite');
   const expenseObjectStore = transaction.objectStore('new_expense');
   expenseObjectStore.add(expense);
-}
+};
 
 function uploadExpenses(event) {
   const transaction = db.transaction(['new_expense'], 'readwrite');
@@ -57,6 +57,6 @@ function uploadExpenses(event) {
       });
     }
   };
-}
+};
 
 window.addEventListener('online', uploadExpenses);
